@@ -5,12 +5,10 @@
 #SBATCH --ntasks=1		# 1 tasks (i.e. processes)
 
 echo $(date)
-echo $FDB5_CONFIG
+echo FDB5_CONFIG: $FDB5_CONFIG
 fdb-info --all
 
 export PATH=$PATH:`$SPACK_ROOT/bin/spack location -i fdb-fortran`
-export PATH=$PATH:`$SPACK_ROOT/bin/spack location -i fdb`
-
 export GRIB_DEFINITION_PATH=/scratch/e1000/meteoswiss/scratch/vcherkas/miniconda3/envs/fdb/share/eccodes/definitions/:/scratch/e1000/meteoswiss/scratch/vcherkas/eccodes-cosmo-resources/definitions
 echo $GRIB_DEFINITION_PATH
 

@@ -33,7 +33,7 @@ gribfilelog = os.path.join(logPath, 'fdb-archive-'+os.getenv("SLURM_JOB_ID"))
 if os.getenv('CODING') == 'grib':
     command = f"fdbf-write --verbose --keys=generatingProcessIdentifier,productionStatusOfProcessedData,paramId,dataDate,dataTime,endStep,productDefinitionTemplateNumber,typeOfLevel,level,scaleFactorOfFirstFixedSurface,scaledValueOfFirstFixedSurface,scaleFactorOfSecondFixedSurface {gribfile} > {gribfilelog}"
 elif os.getenv('CODING') == 'mars':
-        command = f"fdb-write {gribfile} > {gribfilelog}"
+        command = f"fdb-write --verbose {gribfile} > {gribfilelog}"
 
 os.system(command)
 
