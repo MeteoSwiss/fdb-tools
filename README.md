@@ -7,13 +7,17 @@ Before running the FDB scripts you should have FDB installed via spack.
 
 ```
 git clone --depth 1 --recurse-submodules --shallow-submodules -b flexpart_v0.20 https://github.com/C2SM/spack-c2sm.git
-
+```
+```
 . spack-c2sm/setup-env.sh
-
+```
+```
 mkdir spack-env
-
+```
+```
 touch spack-env/spack.yaml
-
+```
+```
 cat > spack-env/spack.yaml << EOF
 # This is a Spack Environment file.
 #
@@ -29,10 +33,11 @@ spack:
     install_tree:
       root: $SCRATCH/spack-root
 EOF
-
-
+```
+```
 spack env activate -p spack-env
-
+```
+```
 spack install
 ```
 To make sure you have spack installed, make sure a path is returned by
