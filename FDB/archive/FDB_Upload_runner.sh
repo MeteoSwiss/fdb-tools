@@ -17,6 +17,7 @@ conda activate fdb
 
 . $SCRATCH/spack-c2sm/setup-env.sh
 spack env activate $SCRATCH/spack-env
+export FDB5_DIR=`spack location -i fdb`
 
 export PATH=$PATH:$FDB5_DIR/bin
 
