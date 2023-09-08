@@ -7,13 +7,7 @@
 #SBATCH --nodes=10
 #SBATCH --ntasks-per-node=10
 
-
-
 echo $(date)
-
-eval "$(conda shell.bash hook)"
-
-conda activate fdb
 
 . $SCRATCH/spack-c2sm/setup-env.sh
 spack env activate $SCRATCH/spack-env
