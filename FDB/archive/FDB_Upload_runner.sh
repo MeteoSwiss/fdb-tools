@@ -59,23 +59,35 @@ fi
 export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
 fdb-info --all
 
-export DATA_DIR=/opr/vcherkas/COSMO-1E/23020103_409
 
-for FOLDER in $DATA_DIR/*/; 
-do
-    echo "$FOLDER"
-    for FILE in $FOLDER/*; 
-    do
-        filename=`basename $FILE`
-        if [[ $filename = laf* ]]
-        then
-            echo Skipping $FILE
-        else
-            export FILE_TO_PROCESS=$FILE
-            sbatch ./FDB_Upload_single.sh 
-        fi
-    done
+archive=0
+
+while true; do
+    read -p "Archive to FDB from: $DATA_DIR? [Y/N]" yn
+    case $yn in
+        [Yy]* ) archive=1; break;;
+        [Nn]* ) archive=0; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
 done
+
+if [ "$archive" -eq "1" ]; then
+    for FOLDER in $DATA_DIR/*/; 
+    do
+        echo "$FOLDER"
+        for FILE in $FOLDER/*; 
+        do
+            filename=`basename $FILE`
+            if [[ $filename = laf* ]]
+            then
+                echo Skipping $FILE
+            else
+                export FILE_TO_PROCESS=$FILE
+                sbatch ./FDB_Upload_single.sh 
+            fi
+        done
+    done
+fi
 
 if [ "$archive" -eq "0" ]; then
     test=0
