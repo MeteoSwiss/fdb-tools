@@ -77,7 +77,7 @@ do
             echo Skipping $FILE
         else
             export FILE_TO_PROCESS=$FILE
-            sbatch ./B_FDB_Upload.sh 
+            sbatch ./B_Upload_single.sh 
         fi
     done
 done
