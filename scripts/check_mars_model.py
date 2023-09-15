@@ -1,6 +1,6 @@
 import argparse
 import eccodes as ec
-from typing import Dict, Any
+from typing import Any
 import hashlib
 import json
 import os
@@ -8,7 +8,7 @@ import gribapi
 import sys
 
 
-def dict_hash(dictionary: Dict[str, Any]) -> str:
+def dict_hash(dictionary: dict[str, Any]) -> str:
     """MD5 hash of a dictionary."""
     dhash = hashlib.md5()
     # We need to sort arguments so {'a': 1, 'b': 2} is
