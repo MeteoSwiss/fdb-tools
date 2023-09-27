@@ -15,9 +15,6 @@ git clone --depth 1 --recurse-submodules --shallow-submodules -b flexpart_v0.20 
 mkdir spack-env
 ```
 ```
-touch spack-env/spack.yaml
-```
-```
 cat > spack-env/spack.yaml << EOF
 # This is a Spack Environment file.
 #
@@ -40,7 +37,7 @@ spack env activate -p spack-env
 ```
 spack install
 ```
-To make sure you have spack installed, make sure a path is returned by
+To make sure you have FDB installed, make sure a path is returned by
 ```
 spack location -i fdb
 ```
