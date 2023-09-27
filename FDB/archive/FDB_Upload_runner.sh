@@ -3,7 +3,7 @@
 #SBATCH --job-name="fdb_upload"
 #SBATCH --time=00:05:00
 #SBATCH --partition=postproc 
-#SBATCH --output=/scratch/e1000/meteoswiss/scratch/vcherkas/fdb-setup/mars/logs/%x.%j.o
+#SBATCH --output=logs/%x.%j.o
 #SBATCH --nodes=10
 #SBATCH --ntasks-per-node=10
 
@@ -55,6 +55,15 @@ if [ "$deletelogs" -eq "1" ]; then
     mkdir -p $RUN_LOG_FOLDER
     rm -rf $RUN_LOG_FOLDER/*
 fi
+
+export ECCODES_PATH=`spack location -i eccodes`
+export COSMO_DEFINITIONS_PATH=$SCRATCH/eccodes-cosmo-resources
+
+if [ ! -d "$SCRATCH/eccodes-cosmo-resources" ]; then
+  git clone git@github.com:cosunae/eccodes-cosmo-resources.git $COSMO_DEFINITIONS_PATH
+fi  
+
+export GRIB_DEFINITION_PATH=$ECCODES_PATH/share/eccodes/definitions/:$COSMO_DEFINITIONS_PATH/definitions
 
 export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
 fdb-info --all
