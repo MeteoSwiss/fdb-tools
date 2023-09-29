@@ -13,4 +13,4 @@ export PATH=$PATH:`spack location -i fdb-fortran`
 echo $GRIB_DEFINITION_PATH
 
 echo "File:" $FILE_TO_PROCESS
-python3 FDB_Upload_run_single.py $FILE_TO_PROCESS
+python3 FDB_archive.py $FILE_TO_PROCESS

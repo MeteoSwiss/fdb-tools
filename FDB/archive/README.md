@@ -5,5 +5,5 @@ Usage
 
 Modify the coding environment variable to MARS or GRIB and modify FDB env variables to point to your schema etc.
 
-source FDB_Upload_runner.sh
+source FDB_archive_COSMO.sh
 

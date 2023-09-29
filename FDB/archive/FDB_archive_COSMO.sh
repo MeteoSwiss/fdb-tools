@@ -92,7 +92,7 @@ if [ "$archive" -eq "1" ]; then
                 echo Skipping $FILE
             else
                 export FILE_TO_PROCESS=$FILE
-                sbatch ./FDB_Upload_single.sh 
+                sbatch ./FDB_archive.sh 
             fi
         done
     done
@@ -119,7 +119,7 @@ if [ "$archive" -eq "0" ]; then
                 echo Skipping $FILE
             else
                 export FILE_TO_PROCESS=$FILE
-                sbatch ./FDB_Upload_single.sh 
+                sbatch ./FDB_archive.sh 
             fi
         done
     fi
