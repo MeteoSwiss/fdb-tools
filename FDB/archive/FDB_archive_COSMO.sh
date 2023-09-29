@@ -1,12 +1,5 @@
 #!/bin/bash
 
-#SBATCH --job-name="fdb_upload"
-#SBATCH --time=00:05:00
-#SBATCH --partition=postproc 
-#SBATCH --output=logs/%x.%j.o
-#SBATCH --nodes=10
-#SBATCH --ntasks-per-node=10
-
 echo $(date)
 
 . $SCRATCH/spack-c2sm/setup-env.sh
@@ -14,7 +7,6 @@ spack env activate $SCRATCH/spack-env
 export FDB5_DIR=`spack location -i fdb`
 
 export PATH=$PATH:$FDB5_DIR/bin
-
 
 export CODING=mars
 
