@@ -55,7 +55,7 @@ if [ ! -d "$SCRATCH/eccodes-cosmo-resources" ]; then
   git clone git@github.com:cosunae/eccodes-cosmo-resources.git $COSMO_DEFINITIONS_PATH
 fi  
 
-export GRIB_DEFINITION_PATH=$ECCODES_PATH/share/eccodes/definitions/:$COSMO_DEFINITIONS_PATH/definitions
+export GRIB_DEFINITION_PATH=$COSMO_DEFINITIONS_PATH/definitions:$ECCODES_PATH/share/eccodes/definitions/
 
 export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
 fdb-info --all
