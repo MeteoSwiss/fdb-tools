@@ -42,3 +42,4 @@ export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-s
 fdb-info --all
 echo FDB5_CONFIG: $FDB5_CONFIG
 
+export PATH=$PATH:$FDB5_DIR/bin:$ECCODES_PATH/bin
