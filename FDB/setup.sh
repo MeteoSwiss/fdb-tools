@@ -1,9 +1,8 @@
 #!/bin/bash
 
-
 export FDB5_DIR=`spack location -i fdb`
-if [[ $FDB5_DIR == *"matches no installed packages"* ]]; then
-  echo "FDB is not installed."
+if [ -z "$FDB5_DIR" ]; then
+  echo "FDB is not installed. Load your spack environment containing an FDB installation."
   return
 fi
 
@@ -25,8 +24,8 @@ fi
 wget https://raw.githubusercontent.com/ecmwf/fdb/master/tests/fdb/etc/fdb/schema --output-document=$SETUP_FOLDER/fdb-schema
 
 export ECCODES_PATH=`spack location -i eccodes`
-if [[ $ECCODES_PATH == *"matches no installed packages"* ]]; then
-  echo "eccodes is not installed."
+if [ -z "$ECCODES_PATH" ]; then
+  echo "eccodes is not installed. Load your spack environment containing an eccodes installation."
   return
 fi
 
