@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# This script is an example script to demonstrate how you could archive a whole model run of COSMO to FDB.
+#
+# Various paths in this script might need to change for your setup:
+#
+# FDB_ROOT_PARENT is the parent directory of where the fdb_root will be created. You should adapt to a directory to which you have write access.
+# The fork/branch of eccodes-cosmo-resources saved at $COSMO_DEFINITIONS_PATH may need to change depending on your needs. This is not configured by this script.
+# It is expected that there is a fdb schema file within $SETUP_FOLDER. You need to provide the schema. There is one you could use at FDB/mars/fdb_schema
+# Your spack may not be saved in this location, and your spack environment may have another name.
+
 echo $(date)
 
 . $SCRATCH/spack-c2sm/setup-env.sh
