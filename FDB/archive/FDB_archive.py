@@ -1,9 +1,7 @@
 import sys
-import json
 import os
-import time
-
 import logging
+from collections import Counter
 
 logPath=os.getenv('RUN_LOG_FOLDER')
 logFileName='TOTAL_FDBFWRITE'
@@ -40,15 +38,13 @@ os.system(command)
 with open(gribfilelog,'r') as source: 
     keys_archived=[line for line in source if line.startswith('Archiving {')]
 
-    rootLogger.debug('[File %s] GRIB records: %s', gribfile, len(keys_archived))    
-    seen = set()
-    dup = set()
-    dup_count=0
-    for line in keys_archived:
-        if line in seen:
-            dup.add(line)
-            dup_count+=1
-        else:
-            seen.add(line)
+    rootLogger.debug(f'[File {gribfile}] GRIB records: {len(keys_archived)}')
+    counter = Counter(keys_archived)
+    dup_count = sum(1 for cnt in counter.values() if cnt > 1)
+    duplicates = [key for key, cnt in counter.items() if cnt > 1]
+    total_dup = sum(cnt for cnt in counter.values() if cnt > 1)
 
-    rootLogger.debug('[File %s] Duplicate records: %s', gribfile , dup_count)   
+    rootLogger.debug(f'[File {gribfile}] Duplicate records: {total_dup} Unique duplicates: {dup_count}')
+    for duplicate in duplicates:
+        rootLogger.debug(f'Duplicate record: {duplicate}')
+    
