@@ -6,7 +6,7 @@ Various tools to assist with FDB/MARS setup.
 Before running the FDB scripts you should have FDB installed via spack.
 
 ```
-git clone --depth 1 --recurse-submodules --shallow-submodules -b flexpart_v0.20 https://github.com/C2SM/spack-c2sm.git
+git clone --depth 1 --recurse-submodules --shallow-submodules -b v0.20.1.0 https://github.com/C2SM/spack-c2sm.git
 ```
 ```
 . spack-c2sm/setup-env.sh
