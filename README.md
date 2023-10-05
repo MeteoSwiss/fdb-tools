@@ -22,7 +22,7 @@ cat > spack-env/spack.yaml << EOF
 # configuration settings.
 spack:
   # add package specs to the `specs` list
-  specs: [fdb ^eckit@1.20.2 ~mpi ^eccodes@2.19.0 jp2k=none +fortran ^hdf5 ~mpi] 
+  specs: [fdb ^eckit@1.20.2 ~mpi ^eccodes@2.25 jp2k=none +fortran ^hdf5 ~mpi] 
   view: false
   concretizer:
     unify: true
