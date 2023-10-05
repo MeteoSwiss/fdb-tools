@@ -23,9 +23,9 @@ fi
 # Default schema
 wget https://raw.githubusercontent.com/ecmwf/fdb/master/tests/fdb/etc/fdb/schema --output-document=$SETUP_FOLDER/fdb-schema
 
-export ECCODES_PATH=`spack location -i eccodes`
+export ECCODES_PATH=`spack location -i eccodes@2:25`
 if [ -z "$ECCODES_PATH" ]; then
-  echo "eccodes is not installed. Load your spack environment containing an eccodes installation."
+  echo "eccodes 2:25 is not installed. Load your spack environment containing an eccodes installation."
   return
 fi
 
