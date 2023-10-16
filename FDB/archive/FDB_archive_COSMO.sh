@@ -4,8 +4,8 @@
 #
 # Various paths in this script might need to change for your setup:
 #
-# FDB_ROOT_PARENT is the parent directory of where the fdb_root will be created. You should adapt to a directory to which you have write access.
-# The fork/branch of eccodes-cosmo-resources saved at $COSMO_DEFINITIONS_PATH may need to change depending on your needs. This is not configured by this script.
+# FDB_ROOT is the directory which the FDB will use to archive data to. You should adapt to a directory to which you have write access.
+# eccodes-cosmo-resources is saved at $COSMO_DEFINITIONS_PATH. You may need to change the branch/fork depending on your needs.
 # It is expected that there is a fdb schema file within $SETUP_FOLDER. You need to provide the schema. There is one you could use at FDB/mars/fdb_schema
 # Your spack may not be saved in this location, and your spack environment may have another name.
 
@@ -13,14 +13,16 @@ echo $(date)
 
 . $SCRATCH/spack-c2sm/setup-env.sh
 spack env activate $SCRATCH/spack-env
+
 export FDB5_DIR=`spack location -i fdb`
+if [ -z "$FDB5_DIR" ]; then
+  echo "FDB is not installed. Load your spack environment containing an FDB installation."
+  return
+fi
 
 export PATH=$PATH:$FDB5_DIR/bin
 
-export CODING=mars
-
-FDB_ROOT_PARENT=/opr/vcherkas/COSMO-1E/$CODING
-FDB_ROOT=$FDB_ROOT_PARENT/fdb_root
+FDB_ROOT=$SCRATCH/fdb_root
 
 while true; do
     read -p "Delete FDB Root at: $FDB_ROOT? [y/N]" yn
@@ -34,10 +36,10 @@ done
 if [ "$delete" -eq "1" ]; then
     echo Emptying FDB Root
     rm -rfv $FDB_ROOT
-    mkdir -p $FDB_ROOT
 fi
+mkdir -p $FDB_ROOT
 
-SETUP_FOLDER=$SCRATCH/fdb-setup/$CODING
+SETUP_FOLDER=$SCRATCH/fdb-setup
 export LOG_FOLDER=$SETUP_FOLDER/logs
 export RUN_LOG_FOLDER=$LOG_FOLDER/full-run
 
@@ -54,26 +56,31 @@ if [ "$deletelogs" -eq "1" ]; then
     echo Emptying Log Folder
     rm -rf $LOG_FOLDER
     mkdir -p $RUN_LOG_FOLDER
-    rm -rf $RUN_LOG_FOLDER/*
 fi
 
-export ECCODES_PATH=`spack location -i eccodes`
-export COSMO_DEFINITIONS_PATH=$SCRATCH/eccodes-cosmo-resources
+export ECCODES_PATH=`spack location -i eccodes@2:25`
+if [ -z "$ECCODES_PATH" ]; then
+  echo "eccodes 2:25 is not installed. Load your spack environment containing an eccodes installation."
+  return
+fi
 
-if [ ! -d "$SCRATCH/eccodes-cosmo-resources" ]; then
-  git clone git@github.com:cosunae/eccodes-cosmo-resources.git $COSMO_DEFINITIONS_PATH
-fi  
+export COSMO_DEFINITIONS_PATH=$SETUP_FOLDER/eccodes-cosmo-resources
+
+if [ ! -d "$COSMO_DEFINITIONS_PATH" ]; then
+  git clone git@github.com:cosunae/eccodes-cosmo-resources.git -b revise_mars_model $COSMO_DEFINITIONS_PATH
+fi
 
 export GRIB_DEFINITION_PATH=$COSMO_DEFINITIONS_PATH/definitions:$ECCODES_PATH/share/eccodes/definitions/
 
 export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
 fdb-info --all
 
-
+# Directory containing COSMO-1E full run of GRIB data.
+export DATA_DIR=/opr/vcherkas/COSMO-1E/23020103_409
 archive=0
 
 while true; do
-    read -p "Archive to FDB from: $DATA_DIR? [Y/N]" yn
+    read -p "Archive to FDB from: $DATA_DIR (all members)? [Y/N]" yn
     case $yn in
         [Yy]* ) archive=1; break;;
         [Nn]* ) archive=0; break;;
@@ -103,7 +110,7 @@ if [ "$archive" -eq "0" ]; then
     test=0
 
     while true; do
-        read -p "Test archive to FDB from: $DATA_DIR/001? [Y/N]" yn
+        read -p "Archive to FDB from: $DATA_DIR/001 (single member)? [Y/N]" yn
         case $yn in
             [Yy]* ) test=1; break;;
             [Nn]* ) test=0; break;;
