@@ -23,16 +23,16 @@ fi
 # Default schema
 wget https://raw.githubusercontent.com/ecmwf/fdb/master/tests/fdb/etc/fdb/schema --output-document=$SETUP_FOLDER/fdb-schema
 
-export ECCODES_PATH=`spack location -i eccodes`
+export ECCODES_PATH=`spack location -i eccodes@2:25`
 if [ -z "$ECCODES_PATH" ]; then
-  echo "eccodes is not installed. Load your spack environment containing an eccodes installation."
+  echo "eccodes 2:25 is not installed. Load your spack environment containing an eccodes installation."
   return
 fi
 
-export COSMO_DEFINITIONS_PATH=$SCRATCH/eccodes-cosmo-resources
+export COSMO_DEFINITIONS_PATH=$SETUP_FOLDER/eccodes-cosmo-resources
 
-if [ ! -d "$SCRATCH/eccodes-cosmo-resources" ]; then
-  git clone git@github.com:cosunae/eccodes-cosmo-resources.git $COSMO_DEFINITIONS_PATH
+if [ ! -d "$COSMO_DEFINITIONS_PATH" ]; then
+  git clone git@github.com:cosunae/eccodes-cosmo-resources.git -b revise_mars_model $COSMO_DEFINITIONS_PATH
 fi  
 
 export GRIB_DEFINITION_PATH=$COSMO_DEFINITIONS_PATH/definitions:$ECCODES_PATH/share/eccodes/definitions/
