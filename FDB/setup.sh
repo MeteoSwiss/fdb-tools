@@ -29,10 +29,10 @@ if [ -z "$ECCODES_PATH" ]; then
   return
 fi
 
-export COSMO_DEFINITIONS_PATH=$SCRATCH/eccodes-cosmo-resources
+export COSMO_DEFINITIONS_PATH=$SETUP_FOLDER/eccodes-cosmo-resources
 
-if [ ! -d "$SCRATCH/eccodes-cosmo-resources" ]; then
-  git clone git@github.com:cosunae/eccodes-cosmo-resources.git $COSMO_DEFINITIONS_PATH
+if [ ! -d "$COSMO_DEFINITIONS_PATH" ]; then
+  git clone git@github.com:cosunae/eccodes-cosmo-resources.git -b revise_mars_model $COSMO_DEFINITIONS_PATH
 fi  
 
 export GRIB_DEFINITION_PATH=$COSMO_DEFINITIONS_PATH/definitions:$ECCODES_PATH/share/eccodes/definitions/
