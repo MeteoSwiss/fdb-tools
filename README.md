@@ -57,16 +57,14 @@ pip install earthkit-data
 
 The setup.sh script sets up the following variables, for a new FDB on your $SCRATCH.
 
-`FDB_HOME` needs to be set (for pyfdb). Identical to `FDB5_HOME`. Find with `spack location -i fdb`.
+- `FDB_HOME` needs to be set (for pyfdb). Identical to `FDB5_HOME`. Find with `spack location -i fdb`.
     
-`FDB5_HOME` needs to be set (for earthkit.data). Identical to `FDB_HOME`. Find with `spack location -i fdb`.
+- `FDB5_HOME` needs to be set (for earthkit.data). Identical to `FDB_HOME`. Find with `spack location -i fdb`.
 
-Either `FDB5_CONFIG` or `FDB5_CONFIG_FILE` needs to be set (for FDB). `FDB5_CONFIG` should have json version of config, whereas `FDB5_CONFIG_FILE` should be set to a file path where the config file (YAML) lives.
+- Either `FDB5_CONFIG` or `FDB5_CONFIG_FILE` needs to be set (for FDB). `FDB5_CONFIG` should have json version of config, whereas `FDB5_CONFIG_FILE` should be set to a file path where the config file (YAML) lives. eg 
+    ```
+    export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
+    ```
 
-eg 
-```
-export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
-```
-
-`ECCODES_DEFINITION_PATH` needs to be set for reading COSMO data. Use the revise_mars_model branch of eccodes_cosmo_definitions.
+- `ECCODES_DEFINITION_PATH` needs to be set for reading COSMO data. Use the revise_mars_model branch of eccodes_cosmo_definitions.
 
