@@ -127,7 +127,7 @@ if [ "$archive" -eq "0" ]; then
                 echo Skipping $FILE
             else
                 export FILE_TO_PROCESS=$FILE
-                sbatch ./FDB_archive.sh 
+                sbatch ./FDB_archive.sh --output $LOG_FOLDER/%x_%j.out
             fi
         done
     fi

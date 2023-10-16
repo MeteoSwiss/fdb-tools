@@ -1,6 +1,5 @@
 #!/bin/bash -l
 #SBATCH --partition=postproc	
-#SBATCH --output=logs/%x_%j.out	# Output file
 #SBATCH --time=0-00:30:00	# 30 minute time limit
 #SBATCH --ntasks=1		# 1 tasks (i.e. processes)
 
