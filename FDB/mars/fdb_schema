@@ -104,4 +104,4 @@ method:     Integer;
 
 [ date, time, stream, class, expver, model, type, number
     [ levtype
-        [ param, step, levelist?]]]
+        [ param, step, levelist? ]]]
