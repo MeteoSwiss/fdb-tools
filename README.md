@@ -55,7 +55,7 @@ pip install earthkit-data
 
 ## Required Environment Variables
 
-The setup.sh script sets up the following variables, for a new FDB on your $SCRATCH.
+The setup.sh script sets up the following variables, for a *new* FDB on your `$SCRATCH`.
 
 - `FDB_HOME` needs to be set (for pyfdb). Identical to `FDB5_HOME`. Find with `spack location -i fdb`.
     
@@ -65,6 +65,7 @@ The setup.sh script sets up the following variables, for a new FDB on your $SCRA
     ```
     export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
     ```
+    The crucial information here is the schema location and the fdb root directorys (in 'roots'). 
 
 - `ECCODES_DEFINITION_PATH` needs to be set for reading COSMO data. Use the revise_mars_model branch of eccodes_cosmo_definitions.
 
