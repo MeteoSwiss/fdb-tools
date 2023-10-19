@@ -6,9 +6,10 @@ import json
 import os
 import gribapi
 import sys
+from pathlib import Path
 
 
-def dict_hash(dictionary: dict[str, Any]) -> str:
+def dict_hash(dictionary) -> str:
     """MD5 hash of a dictionary."""
     dhash = hashlib.md5()
     # We need to sort arguments so {'a': 1, 'b': 2} is
@@ -34,6 +35,9 @@ def main():
     parser.add_argument(
         "-v", "--verbose", action="store_true", help="verbose information for debugging"
     )
+    parser.add_argument(
+        "--dump", action="store_true", help="grib dump first instance of duplicate records to file for debugging"
+    )
 
     parser.add_argument(
         "-e",
@@ -54,15 +58,18 @@ def main():
     # the syntax of the schema keys follows FDB:
     #    ? at the end marks an optional key
     schema_keys = (
-        "class",
-        "stream",
-        "levtype",
-        "param",
-        "level",
-        "step",
-        "date",
-        "time",
-        "number?",
+        "mars.class",
+        "mars.stream",
+        "mars.expver",
+        "mars.model",
+        "mars.type",
+        "mars.levtype",
+        "mars.param",
+        "mars.levelist?",
+        "mars.step",
+        "mars.date",
+        "mars.time",
+        "mars.number?",
         # This is needed to differentiate between 1h and 10min data for step 0,
         # however is commented out since it is not a mars key
         # "indicatorOfUnitOfTimeRange",
@@ -119,6 +126,11 @@ def main():
                 if hash in hash_keys.keys():
                     if param_exception and vals["param"] in param_exception:
                         continue
+                    if args.dump:
+                        with open(Path.cwd() / 'duplicate_1.dump', "w") as fout:
+                            ec.codes_dump(gid, fout, mode='debug')
+                        with open(Path.cwd() / 'duplicate_2.dump', "w") as fout:
+                            ec.codes_dump(index[hash][2], fout, mode='debug')
                     raise RuntimeError(
                         "Hash already found,",
                         vals,
@@ -129,7 +141,7 @@ def main():
                         ". It was already inserted with index: ",
                         index[hash],
                     )
-                index[hash] = (cnt, file)
+                index[hash] = (cnt, file, gid)
                 hash_keys[dict_hash(vals)] = vals
 
 
