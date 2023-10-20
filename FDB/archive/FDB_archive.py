@@ -2,6 +2,7 @@ import sys
 import os
 import logging
 from collections import Counter
+import argparse
 
 logPath=os.getenv('RUN_LOG_FOLDER')
 logFileName='TOTAL_FDBFWRITE'
@@ -22,29 +23,45 @@ rootLogger.addHandler(consoleHandler)
 
 rootLogger.setLevel(logging.DEBUG)
 
-file_to_ingest = sys.argv[1]
-logging.debug(f"File to Ingest: {file_to_ingest}")
+parser = argparse.ArgumentParser(description='Archive some files to FDB.')
+parser.add_argument('files', metavar='N', type=str, nargs='+',
+                    help='Paths to files to archive')
+args = parser.parse_args()
 
-gribfile = file_to_ingest
-gribfilelog = os.path.join(logPath, 'fdb-archive-'+os.getenv("SLURM_JOB_ID"))
+logfile = os.path.join(logPath, 'fdb-write-'+os.getenv("SLURM_JOB_ID"))
 
 if os.getenv('CODING') == 'grib':
-    command = f"fdbf-write --verbose --keys=generatingProcessIdentifier,productionStatusOfProcessedData,paramId,dataDate,dataTime,endStep,productDefinitionTemplateNumber,typeOfLevel,level,scaleFactorOfFirstFixedSurface,scaledValueOfFirstFixedSurface,scaleFactorOfSecondFixedSurface {gribfile} > {gribfilelog}"
-elif os.getenv('CODING') == 'mars':
-    command = f"fdb-write --verbose {gribfile} > {gribfilelog}"
 
+    grib_keys=['generatingProcessIdentifier',
+               'productionStatusOfProcessedData',
+               'paramId',
+               'dataDate',
+               'dataTime',
+               'endStep',
+               'productDefinitionTemplateNumber',
+               'typeOfLevel',
+               'level',
+               'scaleFactorOfFirstFixedSurface',
+               'scaledValueOfFirstFixedSurface',
+               'scaleFactorOfSecondFixedSurface']
+    grib_keys=(',').join(grib_keys)
+    command = f"fdbf-write --verbose --keys={grib_keys} {' '.join(args.files)} > {logfile}"
+
+else:
+    command = f"fdb-write --verbose {' '.join(args.files)} > {logfile}"
+
+rootLogger.debug(f'{command}\n')
 os.system(command)
 
-with open(gribfilelog,'r') as source: 
+with open(logfile,'r') as source: 
     keys_archived=[line for line in source if line.startswith('Archiving {')]
 
-    rootLogger.debug(f'[File {gribfile}] GRIB records: {len(keys_archived)}')
+    rootLogger.debug(f'GRIB records: {len(keys_archived)}')
     counter = Counter(keys_archived)
     dup_count = sum(1 for cnt in counter.values() if cnt > 1)
     duplicates = [key for key, cnt in counter.items() if cnt > 1]
     total_dup = sum(cnt for cnt in counter.values() if cnt > 1)
 
-    rootLogger.debug(f'[File {gribfile}] Duplicate records: {total_dup} Unique duplicates: {dup_count}')
+    rootLogger.debug(f'Duplicate records: {total_dup} Unique duplicates: {dup_count}')
     for duplicate in duplicates:
         rootLogger.debug(f'Duplicate record: {duplicate}')
-    

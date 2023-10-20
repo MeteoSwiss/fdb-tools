@@ -58,9 +58,9 @@ if [ "$deletelogs" -eq "1" ]; then
     mkdir -p $RUN_LOG_FOLDER
 fi
 
-export ECCODES_PATH=`spack location -i eccodes@2:25`
+export ECCODES_PATH=`spack location -i eccodes@2.25`
 if [ -z "$ECCODES_PATH" ]; then
-  echo "eccodes 2:25 is not installed. Load your spack environment containing an eccodes installation."
+  echo "eccodes 2.25 is not installed. Load your spack environment containing an eccodes installation."
   return
 fi
 
@@ -74,6 +74,13 @@ export GRIB_DEFINITION_PATH=$COSMO_DEFINITIONS_PATH/definitions:$ECCODES_PATH/sh
 
 export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
 fdb-info --all
+
+if [ ! -f $SETUP_FOLDER/fdb-schema ]
+then
+    echo "There is no schema at $SETUP_FOLDER/fdb-schema. You could copy the one from the fdb-tools/mars folder."
+    return 1 2>/dev/null
+    exit 1
+fi
 
 # Directory containing COSMO-1E full run of GRIB data.
 export DATA_DIR=/opr/vcherkas/COSMO-1E/23020103_409
@@ -91,18 +98,7 @@ done
 if [ "$archive" -eq "1" ]; then
     for FOLDER in $DATA_DIR/*/; 
     do
-        echo "$FOLDER"
-        for FILE in $FOLDER/*; 
-        do
-            filename=`basename $FILE`
-            if [[ $filename = laf* ]]
-            then
-                echo Skipping $FILE
-            else
-                export FILE_TO_PROCESS=$FILE
-                sbatch ./FDB_archive.sh 
-            fi
-        done
+        sbatch --output $LOG_FOLDER/%x_%j.out ./FDB_archive.sh $FOLDER/lf*
     done
 fi
 
@@ -119,16 +115,6 @@ if [ "$archive" -eq "0" ]; then
     done
 
     if [ "$test" -eq "1" ]; then
-        for FILE in  $DATA_DIR/001/*; 
-        do
-            filename=`basename $FILE`
-            if [[ $filename = laf* ]]
-            then
-                echo Skipping $FILE
-            else
-                export FILE_TO_PROCESS=$FILE
-                sbatch ./FDB_archive.sh --output $LOG_FOLDER/%x_%j.out
-            fi
-        done
+        sbatch --output $LOG_FOLDER/%x_%j.out ./FDB_archive.sh $DATA_DIR/001/lf*
     fi
 fi
