@@ -11,6 +11,9 @@
 
 echo $(date)
 
+# Switch to 1 for debugging
+export FDB_DEBUG=0
+
 . $SCRATCH/spack-c2sm/setup-env.sh
 spack env activate $SCRATCH/spack-env
 
@@ -20,7 +23,7 @@ if [ -z "$FDB5_DIR" ]; then
   return
 fi
 
-export PATH=$PATH:$FDB5_DIR/bin
+export PATH=$FDB5_DIR/bin:$PATH
 
 FDB_ROOT=$SCRATCH/fdb_root
 
@@ -55,8 +58,8 @@ done
 if [ "$deletelogs" -eq "1" ]; then
     echo Emptying Log Folder
     rm -rf $LOG_FOLDER
-    mkdir -p $RUN_LOG_FOLDER
 fi
+mkdir -p $RUN_LOG_FOLDER
 
 export ECCODES_PATH=`spack location -i eccodes@2.25`
 if [ -z "$ECCODES_PATH" ]; then
@@ -74,6 +77,7 @@ export GRIB_DEFINITION_PATH=$COSMO_DEFINITIONS_PATH/definitions:$ECCODES_PATH/sh
 
 export FDB5_CONFIG='{'type':'local','engine':'toc','schema':'$SETUP_FOLDER/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'$FDB_ROOT'}]}]}'
 fdb-info --all
+echo $FDB5_CONFIG
 
 if [ ! -f $SETUP_FOLDER/fdb-schema ]
 then
@@ -82,7 +86,8 @@ then
     exit 1
 fi
 
-# Directory containing COSMO-1E full run of GRIB data.
+# Directory containing COSMO-1E full run of GRIB data. 
+# Change to /opr/vcherkas/COSMO-2E/23072700 for COSMO-2E data
 export DATA_DIR=/opr/vcherkas/COSMO-1E/23020103_409
 archive=0
 

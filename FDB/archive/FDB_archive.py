@@ -30,6 +30,8 @@ args = parser.parse_args()
 
 logfile = os.path.join(logPath, 'fdb-write-'+os.getenv("SLURM_JOB_ID"))
 
+rootLogger.debug(f'GRIB_DEFINITION_PATH={os.environ["GRIB_DEFINITION_PATH"]}')
+
 if os.getenv('CODING') == 'grib':
 
     grib_keys=['generatingProcessIdentifier',
@@ -50,7 +52,7 @@ if os.getenv('CODING') == 'grib':
 else:
     command = f"fdb-write --verbose {' '.join(args.files)} > {logfile}"
 
-rootLogger.debug(f'{command}\n')
+rootLogger.debug(f'{command}')
 os.system(command)
 
 with open(logfile,'r') as source: 
