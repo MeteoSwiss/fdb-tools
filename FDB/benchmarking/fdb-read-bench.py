@@ -3,10 +3,10 @@ import earthkit.data
 import numpy as np
 import time
 
-os.environ['FDB_HOME'] = '/scratch/e1000/meteoswiss/scratch/vcherkas/spack-root/linux-sles15-zen3/gcc-11.3.0/fdb-5.11.17-7nmpdzsfv62vwoi3u3m7zd7jo556jeyt'
+os.environ['FDB_HOME'] = '/scratch/mch/vcherkas/vcherkas/spack-root/linux-sles15-zen3/gcc-11.3.0/fdb-5.11.17-4hcp6n5lien4rzi4tqu2roa4zvsrfeur'
 os.environ['FDB5_HOME'] = os.environ['FDB_HOME']
-os.environ['FDB5_CONFIG'] = "{'type':'local','engine':'toc','schema':'/scratch/e1000/meteoswiss/scratch/vcherkas/fdb-setup/mars/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'/opr/vcherkas/fdb_root'}]}]}"
-os.environ['ECCODES_DEFINITION_PATH'] = '/scratch/e1000/meteoswiss/scratch/vcherkas/eccodes-cosmo-resources/definitions:/scratch/e1000/meteoswiss/scratch/vcherkas/eccodes/definitions'
+os.environ['FDB5_CONFIG'] = "{'type':'local','engine':'toc','schema':'/opr/vcherkas/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'/opr/vcherkas/fdb_root'}]}]}"
+os.environ['ECCODES_DEFINITION_PATH'] = '/scratch/mch/vcherkas/eccodes-cosmo-resources/definitions:/scratch/mch/vcherkas/eccodes/definitions'
 
 class MissingEnvironmentVariable(Exception):
     pass
