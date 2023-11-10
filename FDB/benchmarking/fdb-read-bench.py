@@ -3,9 +3,9 @@ import earthkit.data
 import numpy as np
 import time
 
-os.environ['FDB_HOME'] = '/scratch/mch/vcherkas/vcherkas/spack-root/linux-sles15-zen3/gcc-11.3.0/fdb-5.11.17-4hcp6n5lien4rzi4tqu2roa4zvsrfeur'
+os.environ['FDB_HOME'] = '/scratch/mch/vcherkas/vcherkas/spack-root/linux-sles15-zen3/gcc-11.3.0/fdb-remote-5xqbous4s5ylzecygflbnkcb27cp7rqm' # compiled with lustre
 os.environ['FDB5_HOME'] = os.environ['FDB_HOME']
-os.environ['FDB5_CONFIG'] = "{'type':'local','engine':'toc','schema':'/opr/vcherkas/fdb-schema','spaces':[{'handler':'Default','roots':[{'path':'/opr/vcherkas/fdb_root'}]}]}"
+os.environ['FDB5_CONFIG'] = "{'type':'local','engine':'toc','schema':'/opr/vcherkas/fdb-schema-ordered','spaces':[{'handler':'Default','roots':[{'path':'/opr/vcherkas/fdb_root_ordered'}]}]}"
 os.environ['ECCODES_DEFINITION_PATH'] = '/scratch/mch/vcherkas/eccodes-cosmo-resources/definitions:/scratch/mch/vcherkas/eccodes/definitions'
 
 class MissingEnvironmentVariable(Exception):
@@ -66,17 +66,23 @@ for param in paramlist_all:
 
     for f in ds: 
         print("Ni, Nj", f.metadata(('Ni', 'Nj')))
+        ni, nj = f.metadata(('Ni', 'Nj'))
         break
+    print(request)
     
+print(f"FDB5_CONFIG: {os.environ['FDB5_CONFIG']}")
 print("Sel time:", tot_time_sel)
 print("Load time:", tot_time)
 print("Num records: ", num_rec)
+print("Bits (single prec): ", ni*nj*num_rec*32/(10**9), "Gigabits")
+print("Total rate: ", ni*nj*num_rec*32/(10**9)/(tot_time+tot_time_sel), "Gigabits/s")
 
 tot_time_sel=0
 tot_time=0
-
-files = ["/scratch/mch/cosuna/mars/COSMO-1E/1h/ml_sl/000/lfff00000000","/scratch/mch/cosuna/mars/COSMO-1E/1h/ml_sl/000/lfff00010000","/scratch/mch/cosuna/mars/COSMO-1E/1h/ml_sl/000/lfff00020000"]
 num_rec = 0
+files = ["/opr/vcherkas/lustre_files/lfff00000000",
+         "/opr/vcherkas/lustre_files/lfff00010000",
+         "/opr/vcherkas/lustre_files/lfff00020000"]
 
 for param in paramlist_all_files:
     request = {
@@ -117,4 +123,5 @@ for param in paramlist_all_files:
 print("Sel time:", tot_time_sel)
 print("Load time:", tot_time)
 print("Num records: ", num_rec)
-
+print("Bits (single prec): ", ni*nj*num_rec*32/(10**9), "Gigabits")
+print("Total rate: ", ni*nj*num_rec*32/(10**9)/(tot_time+tot_time_sel), "Gigabits/s")
