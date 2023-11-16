@@ -274,8 +274,7 @@ def scale_and_wait(n: int) -> None:
         client.cluster.scale(n)
         client.wait_for_workers(n)
 
-# Function that reads data using dask.delayed
-# @dask.delayed
+# Function that reads data from FDB
 def read_data(eps: int):
     os.environ['FDB_HOME'] = '/scratch/mch/vcherkas/vcherkas/spack-root/linux-sles15-zen3/gcc-11.3.0/fdb-5.11.17-4hcp6n5lien4rzi4tqu2roa4zvsrfeur'
     os.environ['FDB5_HOME'] = os.environ['FDB_HOME']
