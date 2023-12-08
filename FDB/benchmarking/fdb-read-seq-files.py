@@ -9,22 +9,6 @@ tot_time=0
 files = ["/scratch/mch/cosuna/mars/COSMO-1E/1h/ml_sl/000/lfff00000000","/scratch/mch/cosuna/mars/COSMO-1E/1h/ml_sl/000/lfff00010000","/scratch/mch/cosuna/mars/COSMO-1E/1h/ml_sl/000/lfff00020000"]
 num_rec = 0
 
-request = {
-    #"date":"20230201",
-    #"time":"0300",
-    #"class":"od",
-    #"stream":"enfo",
-    #"type":"ememb",
-    #"model":"COSMO-1E",
-    #"expver":"0001",
-    "step":[0,1,2],
-    #"number":["1"],
-    #"levtype":"ml",
-    #"levelist":list(range(81)),
-    #T,P,FI
-    #"param": param
-    }
-
 start = time.time()
 ds = earthkit.data.from_source("file", files)
 end = time.time()
