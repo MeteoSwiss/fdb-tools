@@ -1,0 +1,7 @@
+.ipynb_checkpoints
+logs
+*.log
+*.grib
+*.png
+*.pyc
+FDB/archive/realtime/fdb_realtime_test/
