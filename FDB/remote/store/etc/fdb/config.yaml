@@ -1,0 +1,10 @@
+---
+type: store
+serverPort: 7000
+store: file
+spaces:
+- handler: Default
+  roots:
+  - path: /scratch/mch/vcherkas/fdb-root
+    writable: true
+    visit: true
