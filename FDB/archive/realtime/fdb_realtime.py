@@ -5,25 +5,58 @@ Modified files are not archived, only newly created files.
 """
 
 import os
+import signal
 import re
 import logging
 import shutil
+import glob
 import datetime as dt
 import time
+import json
 from pathlib import Path
 import eccodes
 import boto3
 from botocore.exceptions import ClientError
 from botocore.config import Config
 
-logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S')
+stem = os.path.join( Path(__file__).parent, Path(__file__).stem )
+log_file_path = stem + '.log'
+pid_file_path = stem + ".pid"
+
+logging.basicConfig(
+    level=logging.INFO,
+    filename=log_file_path,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
 
 logger = logging.getLogger('realtimefdb')
 
+def write_pid_to_file():
+    logger.info(f"Service restarted (PID={str(os.getpid())})")
+    with open(pid_file_path, "w") as f:
+        f.write(f"pid is {str(os.getpid())} \n")
 
-MAX_FDB_ROOT_SIZE = "1TB"
+def remove_pid_file():
+    try:
+        os.remove(pid_file_path)
+    except FileNotFoundError:
+        pass
+
+def signal_handler(signum, frame):
+    logger.error(f"Received signal {signum} {signal.Signals(signum).name} {frame}")
+    remove_pid_file()
+    exit(0)
+
+# Write PID to file
+write_pid_to_file()
+
+# Set up a signal handler to remove the PID file on termination
+catchable_sigs = set(signal.Signals) - {signal.SIGKILL, signal.SIGSTOP}
+for sig in catchable_sigs:
+    signal.signal(sig, signal_handler)
+
+MAX_FDB_ROOT_SIZE = "2TB"
 MAX_FDB_NUM_FORECASTS = 2
 FDB_PATTERN_REGEX = re.compile(r'\d{8}:\d{4}:+')
 
@@ -33,11 +66,11 @@ client = session.client('sns', config=Config(region_name = 'eu-central-2'))
 
 class FSPoller():
     def __init__(self, path, fdb_root):
-        self.regex = re.compile(r"^" + re.escape(path) + r"\d{8}_633/resource/_FXINP_lfff\d{8}_\d{3}([zp]|)$")
+        self.regex = re.compile(r"^" + re.escape(path) + r"\d{8}_6(?!99)\d{2}/resource/_FXINP_lfff\d{8}_\d{3}([zp]|)$")
         self.items = set()
         self.path = Path(path)
-        self.glob = './*_633/resource/_FXINP_lfff*'
-        self.previous_state = set(self.path.rglob(self.glob))
+        self.glob = path+'/*_6??/resource/_FXINP_lfff*'
+        self.previous_state = set(glob.glob(self.glob, recursive=True))
         self.root = fdb_root
 
         import pyfdb
@@ -45,14 +78,17 @@ class FSPoller():
 
     def watch(self):
         while True:
-            current_state = set(self.path.rglob(self.glob))
+            current_state = set(glob.glob(self.glob, recursive=True))
             if added := current_state - self.previous_state:
                 for path in added:
                     logger.info(f"Path created: {path}")
-                    if path.is_file() and self.regex.match(str(path)):
-                        self.items.add(path)
+                    if os.path.isfile(path) and self.regex.match(path):
+                        self.items.add(Path(path))
 
                 self.previous_state = current_state
+            
+            while len(stored_forecasts := get_archived_forecasts(self.root)) > MAX_FDB_NUM_FORECASTS:
+                fdb_wipe_oldest_forecast(self.root, stored_forecasts)
 
             if is_directory_larger_than(self.root, MAX_FDB_ROOT_SIZE):
                 msg = f"FDB is > {MAX_FDB_ROOT_SIZE}, stopping listener."
@@ -69,9 +105,6 @@ class FSPoller():
                 logger.info(f"Flushing FDB")
                 self.fdb.flush()
 
-            while len(stored_forecasts := get_archived_forecasts(self.root)) > MAX_FDB_NUM_FORECASTS:
-                fdb_wipe_oldest_forecast(self.root, stored_forecasts)
-
             time.sleep(15)
 
 
@@ -82,11 +115,11 @@ def archive_files(paths: list[Path], fdb) -> list[Path]:
     archived = []
 
     if not paths:
-        logger.info(f"Created files: none")
+        logger.debug(f"Created files: none")
     else:
         for file in list(paths):
             last_modified_datetime = dt.datetime.fromtimestamp(os.path.getmtime(file))
-            if dt.datetime.now() - last_modified_datetime > datetime.timedelta(seconds=2):
+            if dt.datetime.now() - last_modified_datetime > dt.timedelta(seconds=2):
                 logger.info(f"Archiving to FDB: {file}")
                 fdb.archive(open(file, "rb").read())
                 archived.append(file)
@@ -179,29 +212,19 @@ def send_notifications(paths: list[str]):
 
             eccodes.codes_release(gid)
 
+        body = {
+            'date': date,
+            'time': time,
+            'step': step,
+            'levtype': levtype
+        }
+
         entries.append({
                 'Id': str(idx),
-                'Message': 'Information about newly available forecast data.',
+                'Message': json.dumps(body),
                 'Subject': 'string',
                 'MessageStructure': 'string',
-                'MessageAttributes': {
-                    'date': {
-                        'DataType': 'String',
-                        'StringValue': f'{date}',
-                    },
-                    'time': {
-                        'DataType': 'String',
-                        'StringValue': f'{time}',
-                    },
-                    'step': {
-                        'DataType': 'String',
-                        'StringValue': f'{step}',
-                    },
-                    'levtype': {
-                        'DataType': 'String',
-                        'StringValue': f'{levtype}',
-                    }
-                },
+                'MessageAttributes': {},
             }
         )
 
@@ -256,3 +279,4 @@ if __name__ == "__main__":
     poller = FSPoller(osm_path, root)
 
     poller.watch()
+

@@ -1,4 +1,4 @@
-import service_poll
+import fdb_realtime
 import os
 import shutil
 from pathlib import Path
@@ -33,7 +33,7 @@ def test_polling():
     print('')
     print(f'ls /opr/osm/aare/wd/`ls /opr/osm/aare/wd/ | grep _633 | tail -n 1`/resource/*lfff* | tail -n 1 | xargs  cp -t {test_path} ')
     print('')
-    poller = service_poll.FSPoller(path, root)
+    poller = fdb_realtime.FSPoller(path, root)
 
     poller.watch()
 
