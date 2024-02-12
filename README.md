@@ -1,28 +1,25 @@
-# fdb-tools
-Various tools to assist with FDB/MARS setup.
+# FDB Tools
+
+Scripts/notebooks to set up and demonstrate [FDB](https://github.com/ecmwf/fdb) and [MARS](https://confluence.ecmwf.int/display/UDOC/MARS+user+documentation) at MeteoSwiss.
 
 ## FDB Installation
 
-Before running the FDB scripts you should have FDB installed via spack.
+Before running the FDB scripts you should have FDB installed via spack, eg.
 
 ```
-git clone --depth 1 --recurse-submodules --shallow-submodules -b v0.20.1.0 https://github.com/C2SM/spack-c2sm.git
-```
-```
-. spack-c2sm/setup-env.sh
-```
-```
-mkdir spack-env
-```
-```
-cat > spack-env/spack.yaml << EOF
+mkdir spack-env && cat > spack-env/spack.yaml << EOF
 # This is a Spack Environment file.
 #
 # It describes a set of packages to be installed, along with
 # configuration settings.
 spack:
   # add package specs to the `specs` list
-  specs: [fdb ^eckit@1.20.2 ~mpi ^eccodes@2.25 jp2k=none +fortran ^hdf5 ~mpi] 
+  specs: 
+    - fdb@git.5.11.30 
+    - eckit@git.1.25.2  ~mpi 
+    - eccodes@git.2.34.0 jp2k=none +fortran 
+    - metkit@git.1.11.5
+    - hdf5 ~mpi
   view: false
   concretizer:
     unify: true
