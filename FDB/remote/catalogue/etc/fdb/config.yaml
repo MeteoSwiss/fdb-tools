@@ -5,7 +5,7 @@ serverPort: 8000
 # dataPortStart: 
 # dataPortEnd:
 stores: 
-  - default: <machine-ln00x>.cscs.ch:<port>
+  - default: <machine-ln00x>.cscs.ch:7000
     serveLocalData: true
 engine: toc
 schema: /path/to/fdb-schema
