@@ -5,6 +5,6 @@ store: file
 spaces:
 - handler: Default
   roots:
-  - path: /scratch/mch/vcherkas/fdb-root
+  - path: /path/to/fdb-root
     writable: true
     visit: true

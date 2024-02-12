@@ -1,6 +1,6 @@
 ---
 type: remote
-host: balfrin-ln002.cscs.ch
+host: <machine-ln00x>.cscs.ch
 port: 8000
 store: remote
 engine: remote

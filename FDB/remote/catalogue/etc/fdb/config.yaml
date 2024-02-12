@@ -1,13 +1,17 @@
 ---
 type: catalogue
 serverPort: 8000
-stores: [ "balfrin-ln002.cscs.ch:7000" ] # balfrin login node where store is running # used on archival
-localStores: [ "balfrin-ln002.cscs.ch:7000" ] # can have multiple of these per login node for example to spread the load. # used to inject the endpoint during retrieval.
+# Use dataPortStart and dataPortEnd optionally for data connection
+# dataPortStart: 
+# dataPortEnd:
+stores: 
+  - default: <machine-ln00x>.cscs.ch:<port>
+    serveLocalData: true
 engine: toc
-schema: /scratch/mch/vcherkas/fdb-setup/fdb-schema
+schema: /path/to/fdb-schema
 spaces:
 - handler: Default
   roots:
-  - path: /scratch/mch/vcherkas/fdb-root
+  - path: /path/to/fdb-root
     writable: true
     visit: true
