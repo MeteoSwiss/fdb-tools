@@ -1,0 +1,14 @@
+# This is a Spack Environment file.
+spack:
+  # add package specs to the `specs` list
+  specs: 
+    - fdb@=5.11.116 +tools
+    - eckit@=1.26.2 ~mpi
+    - eccodes@=2.33.0 jp2k=none
+    - metkit@=1.11.9
+  view: $SCRATCH/spack-fdb-view
+  concretizer:
+    unify: true
+  config:
+    install_tree:
+      root: $SCRATCH/spack-fdb-root

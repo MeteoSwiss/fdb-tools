@@ -1,11 +1,14 @@
 ---
 type: catalogue
-serverPort: 8000
-# Use dataPortStart and dataPortEnd optionally for data connection
-# dataPortStart: 
-# dataPortEnd:
+serverPort: 30005
+dataPortStart: 30009
+dataPortCount: 11
 stores: 
-  - default: <machine-ln00x>.cscs.ch:7000
+  - default: <machine-ln00x>.cscs.ch:30006
+    serveLocalData: true
+  - default: <machine-ln00x>.cscs.ch:30007
+    serveLocalData: true
+  - default: <machine-ln00x>.cscs.ch:30008
     serveLocalData: true
 engine: toc
 schema: /path/to/fdb-schema
