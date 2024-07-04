@@ -1,0 +1,12 @@
+---
+type: store
+serverPort: 30008
+dataPortStart: 30041
+dataPortCount: 10
+store: file
+spaces:
+- handler: Default
+  roots:
+  - path: /path/to/fdb-root
+    writable: true
+    visit: true

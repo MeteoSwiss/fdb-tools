@@ -1,6 +1,6 @@
 ---
 type: remote
 host: <machine-ln00x>.cscs.ch
-port: 8000
+port: 30005
 store: remote
 engine: remote

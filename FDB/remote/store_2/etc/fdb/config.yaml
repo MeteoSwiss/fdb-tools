@@ -1,6 +1,8 @@
 ---
 type: store
-serverPort: 7000
+serverPort: 30007
+dataPortStart: 30031
+dataPortCount: 10
 store: file
 spaces:
 - handler: Default

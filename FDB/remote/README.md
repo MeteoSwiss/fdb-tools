@@ -4,9 +4,10 @@ This folder contains:
 
 * Configuration files
   * FDB catalogue server
-  * FDB store server
+  * FDB store server(s)
   * A client to test the remote FDB
 * A script `start.sh` to check that the FDB-servers are running and restart them if not. This can be run as a cronjob, eg.
+* A `spack.yaml` Spack environment file, to install the required versions of FDB and its dependencies.
 
 ```
 crontab -l

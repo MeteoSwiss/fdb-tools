@@ -3,28 +3,30 @@
 # This script is to be run as a cronjob. It checks that Store and Catalogue FDB-servers are running, and restarts the servers if not.
 # This is a short term solution until we can create a long running service with a dedicated service account.
 
+# Example cronjob:
+# 0 */3 * * * /scratch/mch/vcherkas/fdb_remote/cronjob.sh >> /scratch/mch/vcherkas/fdb_remote/cronjob.log  2>&1
+
 # Use the --restart flag to restart the catalogue and server.
 
-export FDB_REMOTE=$(dirname "$(pwd)")
-
-export PATH=/scratch/mch/vcherkas/spack-fdb-view/bin:$PATH
-export GRIB_DEFINITION_PATH=/store_new/mch/msopr/icon_workflow_2/eccodes-cosmo-resources/definitions:/store_new/mch/msopr/icon_workflow_2/eccodes_2.25.1/definitions
+export PATH=/scratch/mch/vcherkas/spack-view/bin:$PATH
+export GRIB_DEFINITION_PATH=/scratch/mch/vcherkas/eccodes-cosmo-resources/definitions:/scratch/mch/vcherkas/eccodes/definitions
 export FDB_DEBUG=1
+export SCRATCH=/scratch/mch/vcherkas
 
 start_service() {
 
     local service=$1
     local service_l=$(echo "$service" | tr '[:upper:]' '[:lower:]')
-    local service_dir="$FDB_REMOTE/$service_l"
+    local service_dir="$SCRATCH/fdb_remote/$service_l"
 
-    cd $FDB_REMOTE/$service_l
+    cd $SCRATCH/fdb_remote/$service_l
     export FDB_HOME=.
-    
-    nohup fdb-server > log.out 2> log.err < /dev/null &
+    mv log.out log_$(date '+%Y%m%d%H%M').out
+    nohup fdb-server $service_l > log.out 2> log.err < /dev/null &
 
     sleep 2
 
-    local pid=$(grep -oP 'pid is \K\d+' "$FDB_REMOTE/$service_l/log.out")
+    local pid=$(grep -oP 'pid is \K\d+' "$SCRATCH/fdb_remote/$service_l/log.out")
 
     if [ -n "$pid" ]; then
         echo $(date '+%Y-%m-%d %H:%M') "New $service PID running: $pid"
@@ -34,11 +36,11 @@ start_service() {
 }
 
 
-for service in Store Catalogue; do
+for service in Store_1 Store_2 Store_3 Catalogue; do
 
     service_l=$(echo "$service" | tr '[:upper:]' '[:lower:]')
-    cd $FDB_REMOTE/$service_l
-    logs=$FDB_REMOTE/$service_l/log.out
+    cd $SCRATCH/fdb_remote/$service_l
+    logs=$SCRATCH/fdb_remote/$service_l/log.out
     pid=$(grep -oP 'pid is \K\d+' "$logs")
 
     # Check if a pid was 
@@ -51,7 +53,7 @@ for service in Store Catalogue; do
             echo $(date '+%Y-%m-%d %H:%M') "$service with PID $pid is still running."
 
             if [ "$1" == "--restart" ]; then
-                echo $(date '+%Y-%m-%d %H:%M') "Restarting $service."
+                echo $(date '+%Y-%m-%d %H:%M') "Restarting $service. Killing process $pid."
                 kill "$pid"
                 start_service "$service"
             fi
