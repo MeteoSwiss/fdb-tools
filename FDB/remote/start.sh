@@ -11,22 +11,22 @@
 export PATH=/scratch/mch/vcherkas/spack-view/bin:$PATH
 export GRIB_DEFINITION_PATH=/scratch/mch/vcherkas/eccodes-cosmo-resources/definitions:/scratch/mch/vcherkas/eccodes/definitions
 export FDB_DEBUG=1
-export SCRATCH=/scratch/mch/vcherkas
+export FDB_REMOTE_ROOT=/scratch/mch/vcherkas/fdb_remote
 
 start_service() {
 
     local service=$1
     local service_l=$(echo "$service" | tr '[:upper:]' '[:lower:]')
-    local service_dir="$SCRATCH/fdb_remote/$service_l"
+    local service_dir="$FDB_REMOTE_ROOT/$service_l"
 
-    cd $SCRATCH/fdb_remote/$service_l
+    cd $FDB_REMOTE_ROOT/$service_l
     export FDB_HOME=.
     mv log.out log_$(date '+%Y%m%d%H%M').out
     nohup fdb-server $service_l > log.out 2> log.err < /dev/null &
 
     sleep 2
 
-    local pid=$(grep -oP 'pid is \K\d+' "$SCRATCH/fdb_remote/$service_l/log.out")
+    local pid=$(grep -oP 'pid is \K\d+' "$FDB_REMOTE_ROOT/$service_l/log.out")
 
     if [ -n "$pid" ]; then
         echo $(date '+%Y-%m-%d %H:%M') "New $service PID running: $pid"
@@ -39,8 +39,8 @@ start_service() {
 for service in Store_1 Store_2 Store_3 Catalogue; do
 
     service_l=$(echo "$service" | tr '[:upper:]' '[:lower:]')
-    cd $SCRATCH/fdb_remote/$service_l
-    logs=$SCRATCH/fdb_remote/$service_l/log.out
+    cd $FDB_REMOTE_ROOT/$service_l
+    logs=$FDB_REMOTE_ROOT/$service_l/log.out
     pid=$(grep -oP 'pid is \K\d+' "$logs")
 
     # Check if a pid was 
